@@ -4,7 +4,7 @@ class Loop extends React.Component{
 
   render() {
     return (
-        <div className="button">
+        <div className="button far fa-circle off">
         </div>
     );
   }

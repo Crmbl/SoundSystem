@@ -45,11 +45,27 @@ body {
 }
 
 .button {
-    display:inline-block;
+    display: inline-block;
     height: 30px;
     width: 30px;
     border-radius: 5px;
     background: #555;
     margin-left:8px;
+    line-height: 30px !important;
+    text-align: center;
+    position: relative;
+    vertical-align: top;
 }
 
+.fas {
+    color: #444;
+}
+
+.far.off
+{
+    color: #444;
+}
+.far.on
+{
+    color: #7bed9f;
+}
