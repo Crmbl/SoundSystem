@@ -2,8 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-function test() {
-    console.log('Enter in renderer.js')
+function DebugMode() {
+    console.log('Enter in renderer.js');
 }
 
-test()
+DebugMode();

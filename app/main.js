@@ -4,8 +4,6 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const url = require('url');
 
-import controlBar from './components/controlBar';
-
 let mainWindow;
 
 ///Create the window.
