@@ -1,3 +1,55 @@
-h1 {
-    color: blueviolet;
+body {
+    height: 100%;
+    margin: 0;
+    -webkit-app-region: drag;
+    border-radius: 8px;
+    border: 2px solid #555;
+    /* box-shadow: 5px 10px; */
 }
+
+.waves {
+    height:100px;
+    width:550px;
+    background-color: #888;
+    display: none;
+}
+
+.player {
+    height:30px;
+    line-height: 30px;
+    width:550px;
+    padding-top: 5px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 5px;
+    background-color: #444;
+    border-radius: 5px;
+}
+
+.border { 
+    display:inline-block;
+    width: 414px;
+	height: 24px;
+	background: #555;
+	border-radius: 5px;
+    padding: 3px;
+    margin-left:8px;
+}
+
+.progress {
+    width: 300px;
+    height: 24px;
+    display: block;
+    border-radius: 5px;
+    background: linear-gradient(to right, #5352ed, #ff4757);
+}
+
+.button {
+    display:inline-block;
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    background: #555;
+    margin-left:8px;
+}
+

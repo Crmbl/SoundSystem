@@ -1,17 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Waves from './components/waves.component';
+import Player from './components/player.component';
 
-class Search extends React.Component {
+class App extends React.Component {
     render() {
         return (
-          <form>
-            <input type = "text" />
-            <input type = "submit" />
-          </form>
+             <Waves />,
+             <Player />
         );
     }
 }
 
-ReactDOM.render( < Search / > ,
+ReactDOM.render( < App / > ,
     document.getElementById('content')
 );

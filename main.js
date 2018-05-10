@@ -10,9 +10,10 @@ let mainWindow;
 ///Create the window.
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 600, 
-    height: 400,
-    // frame: false,
+    width: 554, 
+    height: 140,
+    frame: false,
+    transparent: true,
     resizable: process.env.NODE_ENV === 'development'
   });
 
