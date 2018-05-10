@@ -1,4 +1,5 @@
 const electron = require('electron');
+const eletronReload = require('electron-reload')(__dirname);
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
@@ -9,7 +10,7 @@ let mainWindow;
 ///Create the window.
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 350, 
+    width: 600, 
     height: 400,
     // frame: false,
     resizable: process.env.NODE_ENV === 'development'

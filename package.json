@@ -1,0 +1,32 @@
+{
+  "name": "sound-system",
+  "version": "1.0.0",
+  "description": "A lightweight sound app.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js",
+    "watch": "watchify app/app.js -t babelify -o public/js/bundle.js --debug --verbose"
+  },
+  "repository": "https://github.com/Crmbl/SoundSystem",
+  "keywords": [
+    "Music",
+    "player",
+    "sound"
+  ],
+  "author": "Crmbl",
+  "devDependencies": {
+    "axios": "^0.18.0",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^8.0.0",
+    "classnames": "^2.2.3",
+    "electron": "^2.0.0",
+    "electron-prebuilt": "^1.4.13",
+    "electron-reload": "^1.2.2",
+    "react": "^16.3.2",
+    "react-autocomplete": "^1.0.0-rc2",
+    "react-dom": "^16.3.2",
+    "react-sound": "^1.2.0",
+    "soundmanager2": "^2.97.20150601-a"
+  }
+}
