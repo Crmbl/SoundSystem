@@ -4,16 +4,16 @@ class Play extends React.Component{
 
   render() {
     return (
-        <div className="button fas fa-play" onClick="togglePlay">
+        <div className="button fas fa-play" onClick={this.togglePlay}>
         </div>
     );
   }
-// fa-pause
-}
 
-function togglePlay() {
-  // if (this.className)
-  console.log(this.className);
+  togglePlay() {
+    // if (this.className)
+    alert(this.className);
+  }
+// fa-pause
 }
 
 export default Play

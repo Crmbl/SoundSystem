@@ -28,5 +28,8 @@
     "react-dom": "^16.3.2",
     "react-sound": "^1.2.0",
     "soundmanager2": "^2.97.20150601-a"
+  },
+  "dependencies": {
+    "react-dropzone": "^4.2.9"
   }
 }

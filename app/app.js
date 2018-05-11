@@ -6,8 +6,8 @@ import Player from './components/player.component';
 class App extends React.Component {
     render() {
         return (
-             <Waves />,
-             <Player />
+            <Waves />,
+            <Player />
         );
     }
 }
