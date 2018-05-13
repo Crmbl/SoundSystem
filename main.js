@@ -11,7 +11,7 @@ let mainWindow;
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 554, 
-    height: 140,
+    height: 164,
     frame: false,
     transparent: true,
     resizable: process.env.NODE_ENV === 'development'
