@@ -11,10 +11,11 @@ let mainWindow;
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 554, 
-    height: 164,
+    height: 165,
     frame: false,
     transparent: true,
-    resizable: process.env.NODE_ENV === 'development'
+    resizable: process.env.NODE_ENV === 'development',
+    icon: path.join(__dirname, '/public/img/logo.ico')
   });
 
   mainWindow.loadURL(url.format({
