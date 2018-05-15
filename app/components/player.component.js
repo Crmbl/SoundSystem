@@ -5,7 +5,6 @@ import Dropzone from 'react-dropzone';
 class Player extends React.Component{
 
   render() {
-
     return (
       <div className="player">
         <div id="Play" className="button fas fa-play" onClick={this.props.togglePlay} />
@@ -24,9 +23,8 @@ class Player extends React.Component{
         </div>
       </div>
     );
-
   }
-
+  
 }
 
 export default Player

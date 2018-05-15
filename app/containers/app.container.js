@@ -12,9 +12,14 @@ class AppContainer extends React.Component {
         this.state = {
             track: {path: '', title: ''},
             playStatus: Sound.status.STOPPED,
-            volume: 100,
+            volume: 50,
             loop: false
         }
+
+        soundManager.setup({
+            html5PollingInterval: 1
+            // debugMode: false
+        })
     }
 
     render () {
@@ -52,7 +57,7 @@ class AppContainer extends React.Component {
         progress.classList.remove("drop-look");
         progress.classList.add("progress-look");
         var volume = document.getElementById("VolumeSlider");
-        volume.value = 100;
+        volume.value = 50;
         this.togglePlay();
     }
     
@@ -97,8 +102,8 @@ class AppContainer extends React.Component {
             mute.classList.remove("fa-volume-up");
             mute.classList.add("fa-volume-off");
         } else {
-            this.setState({volume: 100});
-            volume.value = 100;
+            this.setState({volume: 50});
+            volume.value = 50;
             mute.classList.remove("fa-volume-off");
             mute.classList.add("fa-volume-up");
         }
@@ -118,6 +123,7 @@ class AppContainer extends React.Component {
             mute.classList.add("fa-volume-off");
         }
 
+        console.log(this.state.volume);
         this.setState({volume: volume.value});
     }
 
@@ -155,5 +161,4 @@ class AppContainer extends React.Component {
     //#endRegion Methods
 }
 
-// Export AppContainer Component
 export default AppContainer
