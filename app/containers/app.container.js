@@ -31,8 +31,7 @@ class AppContainer extends React.Component {
                         onDropAccepted={this.onDropAccepted.bind(this)}
                         toggleLoop={this.toggleLoop.bind(this)}
                         toggleMute={this.toggleMute.bind(this)}
-                        onMouseEnter={this.onMouseEnter.bind(this)}
-                        onVolumeChange={this.onVolumeChange.bind(this)} />
+                        onInput={this.onInput.bind(this)} />
                 <Handle />
             </div>
         );
@@ -52,6 +51,8 @@ class AppContainer extends React.Component {
         var progress = document.getElementById("ProgressSpan");
         progress.classList.remove("drop-look");
         progress.classList.add("progress-look");
+        var volume = document.getElementById("VolumeSlider");
+        volume.value = 100;
         this.togglePlay();
     }
     
@@ -89,28 +90,35 @@ class AppContainer extends React.Component {
         if (this.state.track.title == '') return;
 
         var mute = document.getElementById("Mute");
+        var volume = document.getElementById("VolumeSlider");
         if (mute.classList.contains("fa-volume-up")) {
             this.setState({volume: 0});
+            volume.value = 0;
             mute.classList.remove("fa-volume-up");
             mute.classList.add("fa-volume-off");
         } else {
             this.setState({volume: 100});
+            volume.value = 100;
             mute.classList.remove("fa-volume-off");
             mute.classList.add("fa-volume-up");
         }
     }
 
-    onMouseEnter() {
+    onInput() {
         if (this.state.track.title == '') return;
 
-        var slider = document.getElementById("VolumeSlider");
-        slider.style.visibility = "visible";
-        //TODO HERE
-    }
+        var volume = document.getElementById("VolumeSlider");
+        var mute = document.getElementById("Mute");
+        if (mute.classList.contains("fa-volume-off")) {
+            mute.classList.remove("fa-volume-off");
+            mute.classList.add("fa-volume-up");
+        }
+        if (volume.value == 0) {
+            mute.classList.remove("fa-volume-up");
+            mute.classList.add("fa-volume-off");
+        }
 
-    onVolumeChange() {
-        if (this.state.track.title == '') return;
-        //TODO HERE
+        this.setState({volume: volume.value});
     }
 
     handleSongPlaying(audio) {
