@@ -12,7 +12,7 @@ class AppContainer extends React.Component {
         this.state = {
             track: {path: '', title: ''},
             playStatus: Sound.status.STOPPED,
-            volume: 50,
+            volume: 100,
             loop: false
         }
 
@@ -57,7 +57,8 @@ class AppContainer extends React.Component {
         progress.classList.remove("drop-look");
         progress.classList.add("progress-look");
         var volume = document.getElementById("VolumeSlider");
-        volume.value = 50;
+        volume.value = 100;
+        this.setState({volume: Number(volume.value)});
         this.togglePlay();
     }
     
@@ -97,13 +98,13 @@ class AppContainer extends React.Component {
         var mute = document.getElementById("Mute");
         var volume = document.getElementById("VolumeSlider");
         if (mute.classList.contains("fa-volume-up")) {
-            this.setState({volume: 0});
             volume.value = 0;
+            this.setState({volume: Number(volume.value)});
             mute.classList.remove("fa-volume-up");
             mute.classList.add("fa-volume-off");
         } else {
-            this.setState({volume: 50});
-            volume.value = 50;
+            volume.value = 100;
+            this.setState({volume: Number(volume.value)});
             mute.classList.remove("fa-volume-off");
             mute.classList.add("fa-volume-up");
         }
@@ -123,8 +124,7 @@ class AppContainer extends React.Component {
             mute.classList.add("fa-volume-off");
         }
 
-        console.log(this.state.volume);
-        this.setState({volume: volume.value});
+        this.setState({volume: Number(volume.value)});
     }
 
     handleSongPlaying(audio) {
