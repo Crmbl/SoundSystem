@@ -6,6 +6,12 @@ import Handle from '../components/handle.component';
 
 class AppContainer extends React.Component {
     
+    // TODO 
+    //! Prendre en compte les .flac
+    //* Mettre en place les waveforms
+    //* Permettre de réduire dans le systray
+    //* Créer un installeur
+
     constructor(props) {
         super(props);
 
@@ -14,12 +20,12 @@ class AppContainer extends React.Component {
             playStatus: Sound.status.STOPPED,
             volume: 100,
             loop: false
-        }
+        };
 
         soundManager.setup({
             html5PollingInterval: 1
             // debugMode: false
-        })
+        });
     }
 
     render () {
