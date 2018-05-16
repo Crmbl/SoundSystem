@@ -47,19 +47,38 @@ class AppContainer extends React.Component {
     onDropAccepted(acceptedFiles) {
         if (acceptedFiles.length != 1) return;
 
-        this.state.track.path = acceptedFiles[0].path;
-        this.state.track.title = acceptedFiles[0].title;
         var play = document.getElementById("Play");
-        play.classList.add("play-enabled");
+        play.classList.remove("fa-play");
+        if (!play.classList.contains("play-enabled"))
+            play.classList.add("play-enabled");
+        if (!play.classList.contains("fa-pause"))    
+            play.classList.add("fa-pause");
+        
         var mute = document.getElementById("Mute");
-        mute.classList.add("mute-enabled");
+        mute.classList.remove("fa-volume-off");
+        if (!mute.classList.contains("mute-enabled"))
+            mute.classList.add("mute-enabled");
+        if (!mute.classList.contains("fa-volume-up"))
+            mute.classList.add("fa-volume-up");
+
         var progress = document.getElementById("ProgressSpan");
+        progress.style.width = null;
         progress.classList.remove("drop-look");
-        progress.classList.add("progress-look");
+        if (!progress.classList.contains("progress-look"))
+            progress.classList.add("progress-look");
+
         var volume = document.getElementById("VolumeSlider");
         volume.value = 100;
-        this.setState({volume: Number(volume.value)});
-        this.togglePlay();
+
+        this.setState({
+            volume: Number(volume.value), 
+            track: {
+                path: acceptedFiles[0].path, 
+                title: acceptedFiles[0].title
+            },
+            position: 0,
+            playStatus: Sound.status.PLAYING
+        });
     }
     
     togglePlay() {
@@ -101,12 +120,14 @@ class AppContainer extends React.Component {
             volume.value = 0;
             this.setState({volume: Number(volume.value)});
             mute.classList.remove("fa-volume-up");
-            mute.classList.add("fa-volume-off");
+            if (!mute.classList.contains("fa-volume-off"))
+                mute.classList.add("fa-volume-off");
         } else {
             volume.value = 100;
             this.setState({volume: Number(volume.value)});
             mute.classList.remove("fa-volume-off");
-            mute.classList.add("fa-volume-up");
+            if (!mute.classList.contains("fa-volume-up"))
+                mute.classList.add("fa-volume-up");
         }
     }
 
@@ -117,11 +138,13 @@ class AppContainer extends React.Component {
         var mute = document.getElementById("Mute");
         if (mute.classList.contains("fa-volume-off")) {
             mute.classList.remove("fa-volume-off");
-            mute.classList.add("fa-volume-up");
+            if (!mute.classList.contains("fa-volume-up"))
+                mute.classList.add("fa-volume-up");
         }
         if (volume.value == 0) {
             mute.classList.remove("fa-volume-up");
-            mute.classList.add("fa-volume-off");
+            if (!mute.classList.add("fa-volume-off"))
+                mute.classList.add("fa-volume-off");
         }
 
         this.setState({volume: Number(volume.value)});
@@ -142,15 +165,22 @@ class AppContainer extends React.Component {
         } else {
             var mute = document.getElementById("Mute");
             var play = document.getElementById("Play");
+
             play.classList.remove("play-enabled");
             play.classList.remove("fa-pause");
-            play.classList.add("fa-play");
+            if (!play.classList.contains("fa-play"))
+                play.classList.add("fa-play");
+
             mute.classList.remove("mute-enabled");
             mute.classList.remove("fa-volume-off");
-            mute.classList.add("fa-volume-up");
-            progress.classList.remove("progress-look");
-            progress.classList.add("drop-look");
+            if (!mute.classList.contains("fa-volume-up"))
+                mute.classList.add("fa-volume-up");
+
             progress.style.width = null;
+            progress.classList.remove("progress-look");
+            if (!progress.classList.contains("drop-look"))
+                progress.classList.add("drop-look");
+
             this.setState({
                 track: {path: '', title: ''},
                 playStatus: Sound.status.STOPPED
