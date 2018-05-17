@@ -11,8 +11,12 @@ body {
 .waves {
     height:100px;
     width:546px;
-    background-color: transparent;
+    background-color: red;
     margin-left: 4px;
+
+
+    -webkit-filter: url("#goo");
+    filter: url("./index.html#goo");
 }
 
 .player {

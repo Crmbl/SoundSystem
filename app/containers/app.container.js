@@ -11,6 +11,7 @@ class AppContainer extends React.Component {
     //* Mettre en place les waveforms
     //* Permettre de réduire dans le systray
     //* Créer un installeur
+    //* Supprimer le lien électron sur clic droit de l'icone
 
     constructor(props) {
         super(props);
@@ -19,7 +20,8 @@ class AppContainer extends React.Component {
             track: {path: '', title: ''},
             playStatus: Sound.status.STOPPED,
             volume: 100,
-            loop: false
+            loop: false,
+            setAnalyser: false
         };
 
         soundManager.setup({
@@ -34,6 +36,7 @@ class AppContainer extends React.Component {
                 <Waves />
                 <Sound url={this.state.track.path}
                     onPlaying={this.handleSongPlaying.bind(this)}
+                    onBufferChange={this.bufferChange.bind(this)}
                     onFinishedPlaying={this.handleSongFinished.bind(this)}
                     playStatus={this.state.playStatus}
                     volume={this.state.volume}
@@ -83,8 +86,22 @@ class AppContainer extends React.Component {
                 title: acceptedFiles[0].title
             },
             position: 0,
-            playStatus: Sound.status.PLAYING
+            playStatus: Sound.status.PLAYING,
+            setAnalyser: false
         });
+    }
+
+    bufferChange() {
+        if (this.state.setAnalyser == true) return;
+
+        this.setState({setAnalyser: true});
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var audioElement = soundManager.sounds[soundManager.soundIDs[0]]._a;
+        var audioSrc = audioCtx.createMediaElementSource(audioElement);
+        // var analyser = audioCtx.createAnalyser();
+
+        // audioSrc.connect(analyser);
+        // audioSrc.connect(audioCtx.destination);
     }
     
     togglePlay() {
