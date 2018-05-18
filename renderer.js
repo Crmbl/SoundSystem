@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 function DebugMode() {
-    console.log('Enter in renderer.js');
+    console.log('Entered in renderer.js');
 }
 
 DebugMode();

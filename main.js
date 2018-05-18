@@ -7,11 +7,10 @@ const url = require('url');
 
 let mainWindow;
 
-///Create the window.
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 554, 
-    height: 165,
+    height: 193,
     frame: false,
     transparent: true,
     resizable: process.env.NODE_ENV === 'development',

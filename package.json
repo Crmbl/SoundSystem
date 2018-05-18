@@ -29,6 +29,8 @@
     "soundmanager2": "^2.97.20150601-a"
   },
   "dependencies": {
-    "react-dropzone": "^4.2.9"
+    "d3": "^5.4.0",
+    "react-dropzone": "^4.2.9",
+    "save": "^2.3.2"
   }
 }
