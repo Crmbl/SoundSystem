@@ -3,17 +3,19 @@ import Sound from 'react-sound';
 import Waves from '../components/waves.component';
 import Player from '../components/player.component';
 import Handle from '../components/handle.component';
-var d3 = require('d3');
+const d3 = require('d3');
+const remote = window.require('electron').remote;
+const main = remote.require("./main.js");
+const ipc = window.require('electron').ipcRenderer;
 
 class AppContainer extends React.Component {
     
     // TODO 
     //! Prendre en compte les .flac
-    //// Mettre en place les waveforms
     //* Ajouter gooey effect sur waveforms
-    //* Permettre de réduire dans le systray
+    //* Ajouter bouton Pause/play sur l'icone de la taskbar si possible
     //* Supprimer le lien électron sur clic droit de l'icone
-    //* Créer un installeur && optimiser (MSIX)
+    //* Créer un installeur (MSIX) && passer en mode release
 
     constructor(props) {
         super(props);
@@ -30,6 +32,10 @@ class AppContainer extends React.Component {
             html5PollingInterval: 1
             // debugMode: false
         });
+
+        ipc.on('toggle', function(event, data) {
+            this.togglePlay(false);
+        }.bind(this));
     }
 
     render () {
@@ -43,11 +49,15 @@ class AppContainer extends React.Component {
                     playStatus={this.state.playStatus}
                     volume={this.state.volume}
                     playFromPosition={this.state.playFromPosition} />
+                <div id="Minimize" className="side-button left fas fa-caret-down"
+                        onClick={this.minimizeToTray.bind(this)} />
                 <Player togglePlay={this.togglePlay.bind(this)}
                         onDropAccepted={this.onDropAccepted.bind(this)}
                         toggleLoop={this.toggleLoop.bind(this)}
                         toggleMute={this.toggleMute.bind(this)}
                         onInput={this.onInput.bind(this)} />
+                <div id="Close" className="side-button right fas fa-times"
+                        onClick={this.closeApp.bind(this)} />
                 <Handle />
             </div>
         );
@@ -91,6 +101,8 @@ class AppContainer extends React.Component {
             playStatus: Sound.status.PLAYING,
             analyser: null
         });
+
+        main.setLabelButton(this.state.playStatus);
     }
 
     bufferChange() {
@@ -121,7 +133,7 @@ class AppContainer extends React.Component {
             .attr('width', 500 / array.length)
     }
     
-    togglePlay() {
+    togglePlay(emit) {
         if (this.state.track.title == '') return;
 
         var play = document.getElementById("Play");
@@ -134,6 +146,9 @@ class AppContainer extends React.Component {
             play.classList.remove("fa-play");
             play.classList.add("fa-pause");
         }
+
+        if (emit)
+            main.setLabelButton(this.state.playStatus);
     }
 
     toggleLoop() {
@@ -244,6 +259,14 @@ class AppContainer extends React.Component {
 
             d3.select('#Svg').remove();
         }
+    }
+
+    minimizeToTray() {
+        remote.BrowserWindow.getFocusedWindow().hide();
+    }
+
+    closeApp() {
+        remote.app.quit();
     }
 
     //#endRegion Methods
