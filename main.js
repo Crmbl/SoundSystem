@@ -6,7 +6,6 @@ const Menu = electron.Menu;
 const Tray = electron.Tray;
 const path = require('path');
 const url = require('url');
-
 const ipc = electron.ipcMain;
 
 let mainWindow;
@@ -39,6 +38,7 @@ function createWindow () {
   mainWindow.on('hide',function(event){
     event.preventDefault();
     tray = new Tray(path.join(__dirname, '/public/img/logo.ico'));
+    tray.addListener("double-click", () => { mainWindow.show(); tray.destroy(); });
     buildMenu();
   });
 }

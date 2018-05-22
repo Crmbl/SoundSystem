@@ -1,9 +1,10 @@
 body {
-    height: 100%;
     margin: 0;
     border-radius: 8px;
     -webkit-user-select: none;
     user-select: none;
+
+    overflow: hidden;
 }
 
 .waves {
@@ -13,13 +14,13 @@ body {
     margin-left: 22px;
 }
 
-#Svg {
-    margin-left: 22px;
-}
-
-#Svg>rect {
+.gooey {
     -webkit-filter: url(#GooFilter);
     filter: url(#GooFilter);
+}
+
+#Svg {
+    margin-left: 22px;
 }
 
 .player {

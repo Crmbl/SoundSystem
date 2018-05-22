@@ -5,7 +5,7 @@ class Waves extends React.Component{
   render() {
     
     return (
-      <div id="Waves" className="waves" />
+      <div id="Waves" className="waves" onDoubleClick={this.props.onDoubleClick} />
     );
   }
 

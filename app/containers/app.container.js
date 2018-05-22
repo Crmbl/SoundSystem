@@ -12,10 +12,12 @@ class AppContainer extends React.Component {
     
     // TODO 
     //! Prendre en compte les .flac
-    //* Ajouter gooey effect sur waveforms
+
     //* Ajouter bouton Pause/play sur l'icone de la taskbar si possible
     //* Supprimer le lien électron sur clic droit de l'icone
     //* Créer un installeur (MSIX) && passer en mode release
+
+    //! OPTIMISER, vider l'audio après un Ondrop
 
     constructor(props) {
         super(props);
@@ -41,7 +43,7 @@ class AppContainer extends React.Component {
     render () {
         return (
             <div>
-                <Waves />
+                <Waves onDoubleClick={this.updateDesign.bind(this)} />
                 <Sound url={this.state.track.path}
                     onPlaying={this.handleSongPlaying.bind(this)}
                     onBufferChange={this.bufferChange.bind(this)}
@@ -67,6 +69,7 @@ class AppContainer extends React.Component {
 
     onDropAccepted(acceptedFiles) {
         if (acceptedFiles.length != 1) return;
+        if (acceptedFiles[0].name == this.state.track.title) return;
 
         var play = document.getElementById("Play");
         play.classList.remove("fa-play");
@@ -95,7 +98,7 @@ class AppContainer extends React.Component {
             volume: Number(volume.value), 
             track: {
                 path: acceptedFiles[0].path, 
-                title: acceptedFiles[0].title
+                title: acceptedFiles[0].name
             },
             position: 0,
             playStatus: Sound.status.PLAYING,
@@ -117,14 +120,17 @@ class AppContainer extends React.Component {
         this.setState({analyser: analyser});
 
         var array = new Uint8Array(125);
-        var svg = d3.select("#Waves").append('svg').attr('height', '128').attr('width', '500').attr('id', 'Svg');
+        var svg = d3.select("#Waves").append('svg').attr('id', 'Svg').attr('height', '128px').attr('width', '500px');
         var defs = svg.append('defs');
         var gradient = defs.append('linearGradient').attr('id', 'Gradient').attr('x1', '100%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
         gradient.append('stop').attr('offset', '0%').attr('stop-color', '#e0c3fc');
         gradient.append('stop').attr('offset', '100%').attr('stop-color', '#8ec5fc');
+        var gradientGooey = defs.append('linearGradient').attr('id', 'GradientGooey').attr('x1', '100%').attr('y1', '100%').attr('x2', '100%').attr('y2', '0%');
+        gradientGooey.append('stop').attr('offset', '0%').attr('stop-color', '#43e97b');
+        gradientGooey.append('stop').attr('offset', '100%').attr('stop-color', '#38f9d7');
         var filter = defs.append('filter').attr('id', 'GooFilter');
-        filter.append('feGaussionBlur').attr('in', 'SourceGraphic').attr('stdDeviation', '10').attr('result', 'blur');
-        filter.append('feColorMatrix').attr('in', 'SourceGraphic').attr('mode', 'matrix').attr('values', '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9').attr('result', 'goo');
+        filter.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', '10').attr('result', 'blur');
+        filter.append('feColorMatrix').attr('in', 'blur').attr('mode', 'matrix').attr('values', '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9').attr('result', 'goo');
         filter.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'goo').attr('operator', 'atop');
 
         svg.selectAll('rect').data(array).enter()
@@ -209,9 +215,12 @@ class AppContainer extends React.Component {
         var progress = document.getElementById("ProgressSpan");
         progress.style.width = audio.position / audio.duration * 100 + '%';
 
+        if (this.state.analyser == null) return;
+        
         var array = new Uint8Array(125);
         this.state.analyser.getByteFrequencyData(array);
         var svg = d3.select("#Svg");
+        var waves = document.getElementById('Waves');
         svg.selectAll('rect')
             .data(array)
             .attr('y', function(d) {
@@ -221,7 +230,10 @@ class AppContainer extends React.Component {
                 return d / 2;
             })
             .attr('fill', function(d) {
-                return "url(#Gradient)";
+                if (!waves.classList.contains("gooey"))
+                    return "url(#Gradient)";
+                else
+                    return "url(#GradientGooey)";
             });
     }
     
@@ -267,6 +279,16 @@ class AppContainer extends React.Component {
 
     closeApp() {
         remote.app.quit();
+    }
+
+    updateDesign() {
+        if (this.state.track.title == '') return;
+
+        var waves = document.getElementById('Waves');
+        if (!waves.classList.contains("gooey"))
+            waves.classList.add('gooey');
+        else
+            waves.classList.remove('gooey');
     }
 
     //#endRegion Methods
