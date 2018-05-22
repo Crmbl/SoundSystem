@@ -3,14 +3,17 @@ import Sound from 'react-sound';
 import Waves from '../components/waves.component';
 import Player from '../components/player.component';
 import Handle from '../components/handle.component';
+var d3 = require('d3');
 
 class AppContainer extends React.Component {
     
     // TODO 
     //! Prendre en compte les .flac
-    //* Mettre en place les waveforms
+    //// Mettre en place les waveforms
+    //* Ajouter gooey effect sur waveforms
     //* Permettre de réduire dans le systray
-    //* Créer un installeur
+    //* Supprimer le lien électron sur clic droit de l'icone
+    //* Créer un installeur && optimiser (MSIX)
 
     constructor(props) {
         super(props);
@@ -19,7 +22,8 @@ class AppContainer extends React.Component {
             track: {path: '', title: ''},
             playStatus: Sound.status.STOPPED,
             volume: 100,
-            loop: false
+            loop: false,
+            analyser: null
         };
 
         soundManager.setup({
@@ -34,6 +38,7 @@ class AppContainer extends React.Component {
                 <Waves />
                 <Sound url={this.state.track.path}
                     onPlaying={this.handleSongPlaying.bind(this)}
+                    onBufferChange={this.bufferChange.bind(this)}
                     onFinishedPlaying={this.handleSongFinished.bind(this)}
                     playStatus={this.state.playStatus}
                     volume={this.state.volume}
@@ -83,8 +88,37 @@ class AppContainer extends React.Component {
                 title: acceptedFiles[0].title
             },
             position: 0,
-            playStatus: Sound.status.PLAYING
+            playStatus: Sound.status.PLAYING,
+            analyser: null
         });
+    }
+
+    bufferChange() {
+        if (this.state.analyser != null) return;
+
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var audioElement = soundManager.sounds[soundManager.soundIDs[0]]._a;
+        var audioSrc = audioCtx.createMediaElementSource(audioElement);
+        var analyser = audioCtx.createAnalyser();
+        audioSrc.connect(analyser);
+        audioSrc.connect(audioCtx.destination);
+        this.setState({analyser: analyser});
+
+        var array = new Uint8Array(125);
+        var svg = d3.select("#Waves").append('svg').attr('height', '128').attr('width', '500').attr('id', 'Svg');
+        var defs = svg.append('defs');
+        var gradient = defs.append('linearGradient').attr('id', 'Gradient').attr('x1', '100%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
+        gradient.append('stop').attr('offset', '0%').attr('stop-color', '#e0c3fc');
+        gradient.append('stop').attr('offset', '100%').attr('stop-color', '#8ec5fc');
+        var filter = defs.append('filter').attr('id', 'GooFilter');
+        filter.append('feGaussionBlur').attr('in', 'SourceGraphic').attr('stdDeviation', '10').attr('result', 'blur');
+        filter.append('feColorMatrix').attr('in', 'SourceGraphic').attr('mode', 'matrix').attr('values', '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9').attr('result', 'goo');
+        filter.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'goo').attr('operator', 'atop');
+
+        svg.selectAll('rect').data(array).enter()
+            .append('rect')
+            .attr('x', function(d, i) { return i * (500 / array.length); })
+            .attr('width', 500 / array.length)
     }
     
     togglePlay() {
@@ -159,6 +193,21 @@ class AppContainer extends React.Component {
     handleSongPlaying(audio) {
         var progress = document.getElementById("ProgressSpan");
         progress.style.width = audio.position / audio.duration * 100 + '%';
+
+        var array = new Uint8Array(125);
+        this.state.analyser.getByteFrequencyData(array);
+        var svg = d3.select("#Svg");
+        svg.selectAll('rect')
+            .data(array)
+            .attr('y', function(d) {
+                return 128 - d /2;
+            })
+            .attr('height', function(d) {
+                return d / 2;
+            })
+            .attr('fill', function(d) {
+                return "url(#Gradient)";
+            });
     }
     
     handleSongFinished(audio) {
@@ -189,8 +238,11 @@ class AppContainer extends React.Component {
 
             this.setState({
                 track: {path: '', title: ''},
-                playStatus: Sound.status.STOPPED
+                playStatus: Sound.status.STOPPED,
+                analyser: null
             });
+
+            d3.select('#Svg').remove();
         }
     }
 
