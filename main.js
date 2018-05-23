@@ -11,6 +11,7 @@ const ipc = electron.ipcMain;
 let mainWindow;
 let tray = null;
 let labelButton = 'Play';
+let pathToIcon = '/public/img/pause.ico';
 let contextMenu = null;
 
 function createWindow () {
@@ -35,11 +36,18 @@ function createWindow () {
     mainWindow = null;
   });
 
-  mainWindow.on('hide',function(event){
+  mainWindow.on('hide', function(event){
     event.preventDefault();
     tray = new Tray(path.join(__dirname, '/public/img/logo.ico'));
     tray.addListener("double-click", () => { mainWindow.show(); tray.destroy(); });
     buildMenu();
+  });
+
+  mainWindow.on('maximize', function(event) {
+    if (labelButton == 'Play')
+      buildThumbarButtons('PLAYING');
+    else
+      buildThumbarButtons('PAUSED');
   });
 }
 
@@ -68,6 +76,28 @@ exports.setLabelButton = arg => {
     labelButton = 'Play';
   else
     labelButton = 'Pause';
+}
+
+function buildThumbarButtons(arg) {
+  if (arg == 'PLAYING')
+    pathToIcon = '/public/img/pause.ico';
+  else
+    pathToIcon = '/public/img/play.ico';
+
+  mainWindow.setThumbarButtons([
+    {
+      icon: path.join(__dirname, pathToIcon),
+      click() { mainWindow.webContents.send('toggle', ''); }
+    }
+  ]);
+}
+
+exports.buildThumbar = arg => {
+  buildThumbarButtons(arg);
+}
+
+exports.removeThumbar = arg => {
+  mainWindow.setThumbarButtons([]);
 }
 
 // This method will be called when Electron has finished

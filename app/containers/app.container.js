@@ -12,12 +12,11 @@ class AppContainer extends React.Component {
     
     // TODO 
     //! Prendre en compte les .flac
+    //! OPTIMISER, vider l'audio après un Ondrop
 
     //* Ajouter bouton Pause/play sur l'icone de la taskbar si possible
     //* Supprimer le lien électron sur clic droit de l'icone
     //* Créer un installeur (MSIX) && passer en mode release
-
-    //! OPTIMISER, vider l'audio après un Ondrop
 
     constructor(props) {
         super(props);
@@ -106,6 +105,7 @@ class AppContainer extends React.Component {
         });
 
         main.setLabelButton(this.state.playStatus);
+        main.buildThumbar(this.state.playStatus);
     }
 
     bufferChange() {
@@ -153,8 +153,10 @@ class AppContainer extends React.Component {
             play.classList.add("fa-pause");
         }
 
-        if (emit)
+        if (emit == false)
             main.setLabelButton(this.state.playStatus);
+        
+        main.buildThumbar(this.state.playStatus);
     }
 
     toggleLoop() {
@@ -269,6 +271,7 @@ class AppContainer extends React.Component {
                 analyser: null
             });
 
+            main.removeThumbar();
             d3.select('#Svg').remove();
         }
     }
