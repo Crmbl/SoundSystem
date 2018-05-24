@@ -9,14 +9,6 @@ const main = remote.require("./main.js");
 const ipc = window.require('electron').ipcRenderer;
 
 class AppContainer extends React.Component {
-    
-    // TODO 
-    //! Prendre en compte les .flac
-    //! OPTIMISER, vider l'audio après un Ondrop
-
-    //* Ajouter bouton Pause/play sur l'icone de la taskbar si possible
-    //* Supprimer le lien électron sur clic droit de l'icone
-    //* Créer un installeur (MSIX) && passer en mode release
 
     constructor(props) {
         super(props);
@@ -30,12 +22,12 @@ class AppContainer extends React.Component {
         };
 
         soundManager.setup({
-            html5PollingInterval: 1
-            // debugMode: false
+            html5PollingInterval: 1,
+            debugMode: false
         });
 
         ipc.on('toggle', function(event, data) {
-            this.togglePlay(false);
+            this.togglePlay();
         }.bind(this));
     }
 
@@ -69,6 +61,8 @@ class AppContainer extends React.Component {
     onDropAccepted(acceptedFiles) {
         if (acceptedFiles.length != 1) return;
         if (acceptedFiles[0].name == this.state.track.title) return;
+
+        d3.select("#Svg").remove();
 
         var play = document.getElementById("Play");
         play.classList.remove("fa-play");
@@ -104,8 +98,8 @@ class AppContainer extends React.Component {
             analyser: null
         });
 
-        main.setLabelButton(this.state.playStatus);
-        main.buildThumbar(this.state.playStatus);
+        main.setLabelButton(false);
+        main.buildThumbar(false);
     }
 
     bufferChange() {
@@ -139,24 +133,25 @@ class AppContainer extends React.Component {
             .attr('width', 500 / array.length)
     }
     
-    togglePlay(emit) {
+    togglePlay() {
         if (this.state.track.title == '') return;
 
+        var isPaused = true;
         var play = document.getElementById("Play");
         if(this.state.playStatus === Sound.status.PLAYING){
             this.setState({playStatus: Sound.status.PAUSED});
             play.classList.remove("fa-pause");
             play.classList.add("fa-play");
+            isPaused = true;
         } else {
             this.setState({playStatus: Sound.status.PLAYING});
             play.classList.remove("fa-play");
             play.classList.add("fa-pause");
+            isPaused = false;
         }
 
-        if (emit == false)
-            main.setLabelButton(this.state.playStatus);
-        
-        main.buildThumbar(this.state.playStatus);
+        main.setLabelButton(isPaused);
+        main.buildThumbar(isPaused);
     }
 
     toggleLoop() {
@@ -272,6 +267,7 @@ class AppContainer extends React.Component {
             });
 
             main.removeThumbar();
+            main.setLabelButton('None');
             d3.select('#Svg').remove();
         }
     }
@@ -283,7 +279,7 @@ class AppContainer extends React.Component {
     closeApp() {
         remote.app.quit();
     }
-
+    
     updateDesign() {
         if (this.state.track.title == '') return;
 

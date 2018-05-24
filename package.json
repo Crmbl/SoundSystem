@@ -1,5 +1,5 @@
 {
-  "name": "sound-system",
+  "name": "soundsystem",
   "version": "1.0.0",
   "description": "A lightweight sound app.",
   "main": "main.js",

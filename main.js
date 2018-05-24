@@ -1,5 +1,7 @@
 const electron = require('electron');
-const eletronReload = require('electron-reload')(__dirname);
+if (process.env.NODE_ENV === 'development') {
+  const eletronReload = require('electron-reload')(__dirname);
+}
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
@@ -10,8 +12,8 @@ const ipc = electron.ipcMain;
 
 let mainWindow;
 let tray = null;
-let labelButton = 'Play';
-let pathToIcon = '/public/img/pause.ico';
+let labelButton = 'None';
+let pathToIcon = '/public/img/play.ico';
 let contextMenu = null;
 
 function createWindow () {
@@ -21,7 +23,8 @@ function createWindow () {
     frame: false,
     transparent: true,
     resizable: process.env.NODE_ENV === 'development',
-    icon: path.join(__dirname, '/public/img/logo.ico')
+    icon: path.join(__dirname, '/public/img/logo.ico'),
+    webPreferences: { devTools: false }
   });
 
   mainWindow.loadURL(url.format({
@@ -36,53 +39,70 @@ function createWindow () {
     mainWindow = null;
   });
 
-  mainWindow.on('hide', function(event){
+  mainWindow.on('hide', function(event) {
     event.preventDefault();
     tray = new Tray(path.join(__dirname, '/public/img/logo.ico'));
     tray.addListener("double-click", () => { mainWindow.show(); tray.destroy(); });
+    mainWindow.setSkipTaskbar(true);
     buildMenu();
   });
 
-  mainWindow.on('maximize', function(event) {
+  mainWindow.on('show', function() {
+    mainWindow.setSkipTaskbar(false);
+    if (labelButton == 'None') return;
+
     if (labelButton == 'Play')
-      buildThumbarButtons('PLAYING');
+      buildThumbarButtons(true);
     else
-      buildThumbarButtons('PAUSED');
+      buildThumbarButtons(false);
   });
 }
 
 function buildMenu() {
   contextManu = null;
-  contextMenu = Menu.buildFromTemplate([
-    {label: 'Maximize', role:'maximize', click: () => {
-      mainWindow.show();
-      tray.destroy();
-    }},
-    {label: labelButton, click: () => {
-      mainWindow.webContents.send('toggle', '');
-      if (labelButton == 'Play')
-        labelButton = 'Pause';
-      else
-        labelButton = 'Play';
-      buildMenu();
-    }},
-    {label: 'Close', role: 'close', click: () => app.quit()}
-  ]);
+  if (labelButton == 'None') {
+    contextMenu = Menu.buildFromTemplate([
+      {label: 'Maximize', role:'maximize', click: () => {
+        mainWindow.show();
+        tray.destroy();
+      }},
+      {label: 'Close', role: 'close', click: () => app.quit()}
+    ]);
+  } else {
+    contextMenu = Menu.buildFromTemplate([
+      {label: 'Maximize', role:'maximize', click: () => {
+        mainWindow.show();
+        tray.destroy();
+      }},
+      {label: labelButton, click: () => {
+        mainWindow.webContents.send('toggle', '');
+        if (labelButton == 'Play')
+          labelButton = 'Pause';
+        else
+          labelButton = 'Play';
+        buildMenu();
+      }},
+      {label: 'Close', role: 'close', click: () => app.quit()}
+    ]);
+  }
+
   tray.setContextMenu(contextMenu);
 }
 
-exports.setLabelButton = arg => {
-  if (arg == 'PLAYING')
+exports.setLabelButton = isPaused => {
+  if (isPaused == true)
     labelButton = 'Play';
-  else
+  else if (isPaused == false)
     labelButton = 'Pause';
+  else
+    labelButton = 'None';
 }
 
-function buildThumbarButtons(arg) {
-  if (arg == 'PLAYING')
-    pathToIcon = '/public/img/pause.ico';
-  else
+function buildThumbarButtons(isPaused) {
+  if (isPaused == true)
     pathToIcon = '/public/img/play.ico';
+  else
+    pathToIcon = '/public/img/pause.ico';
 
   mainWindow.setThumbarButtons([
     {
@@ -100,23 +120,15 @@ exports.removeThumbar = arg => {
   mainWindow.setThumbarButtons([]);
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', createWindow)
 
-// Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
