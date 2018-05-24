@@ -1,0 +1,2 @@
+// PACKAGER COMMAND -> windows
+electron-packager . SoundSystem --overwrite --asar --platform=win32 --arch=ia32 --icon=public/img/logo.ico

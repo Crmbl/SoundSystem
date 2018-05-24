@@ -12,6 +12,7 @@ body {
     width:546px;
     background-color: transparent;
     margin-left: 22px;
+    visibility: visible;
 }
 
 .gooey {
@@ -226,4 +227,54 @@ hr {
     background: #fd868c;
     cursor: pointer;
     border-radius: 5px;
+}
+
+#WaveformContainer {
+    position: absolute;
+    left: 28px;
+    top: 45px;
+    width: 30px;
+    height: 90px;
+    opacity: 0;
+    transition: opacity .4s;
+}
+
+#WaveformContainer:hover {
+    opacity: 1;
+}
+
+#WaveControllers {
+    background-color: #888;
+    border-radius: 5px;
+    border-width: 2px;
+    margin-left: 5px;
+    height: 75px;
+    width: 20px;
+    margin-top: 5px;
+}
+
+.small-cube {
+    display: block;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    border-radius: 2px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+#GooeyWaves {
+    top: 18px;
+    background-image: linear-gradient(to top, #43e97b 0%, #38f9d7 100%);
+}
+
+#NormalWaves {
+    top: 23px;
+    background-image: linear-gradient(to bottom, #e0c3fc 0%, #8ec5fc 100%);
+}
+
+#NoWave {
+    top: 28px;
+    background-color: #555;
 }

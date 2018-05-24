@@ -8,6 +8,13 @@ class Player extends React.Component{
     return (
       <div className="player">
         <div id="Play" className="button fas fa-play" onClick={this.props.togglePlay} />
+        <div id="WaveformContainer">
+          <div id="WaveControllers">
+            <canvas id="GooeyWaves" className="small-cube" onClick={this.props.toggleGooey} />
+            <canvas id="NormalWaves" className="small-cube" onClick={this.props.toggleNormal} />
+            <canvas id="NoWave" className="small-cube" onClick={this.props.toggleNoWave} />
+          </div>
+        </div>
         <Dropzone onDropAccepted={this.props.onDropAccepted}
                   className="drop-zone"
                   accept="audio/flac, audio/mp3">

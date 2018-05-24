@@ -1,3 +1,6 @@
+//! CHANGE THIS VALUE
+process.env.NODE_ENV = 'development';
+//!/!/!/!/!/!/!/!/!/!
 const electron = require('electron');
 if (process.env.NODE_ENV === 'development') {
   const eletronReload = require('electron-reload')(__dirname);
@@ -24,7 +27,7 @@ function createWindow () {
     transparent: true,
     resizable: process.env.NODE_ENV === 'development',
     icon: path.join(__dirname, '/public/img/logo.ico'),
-    webPreferences: { devTools: false }
+    webPreferences: { devTools: process.env.NODE_ENV === 'development' }
   });
 
   mainWindow.loadURL(url.format({

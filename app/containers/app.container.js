@@ -8,6 +8,8 @@ const remote = window.require('electron').remote;
 const main = remote.require("./main.js");
 const ipc = window.require('electron').ipcRenderer;
 
+let audioCtx;
+
 class AppContainer extends React.Component {
 
     constructor(props) {
@@ -34,7 +36,7 @@ class AppContainer extends React.Component {
     render () {
         return (
             <div>
-                <Waves onDoubleClick={this.updateDesign.bind(this)} />
+                <Waves />
                 <Sound url={this.state.track.path}
                     onPlaying={this.handleSongPlaying.bind(this)}
                     onBufferChange={this.bufferChange.bind(this)}
@@ -48,6 +50,9 @@ class AppContainer extends React.Component {
                         onDropAccepted={this.onDropAccepted.bind(this)}
                         toggleLoop={this.toggleLoop.bind(this)}
                         toggleMute={this.toggleMute.bind(this)}
+                        toggleGooey={this.toggleGooey.bind(this)}
+                        toggleNormal={this.toggleNormal.bind(this)}
+                        toggleNoWave={this.toggleNoWave.bind(this)}
                         onInput={this.onInput.bind(this)} />
                 <div id="Close" className="side-button right fas fa-times"
                         onClick={this.closeApp.bind(this)} />
@@ -97,6 +102,9 @@ class AppContainer extends React.Component {
             playStatus: Sound.status.PLAYING,
             analyser: null
         });
+        
+        if (audioCtx != null)
+            audioCtx.close();
 
         main.setLabelButton(false);
         main.buildThumbar(false);
@@ -105,7 +113,7 @@ class AppContainer extends React.Component {
     bufferChange() {
         if (this.state.analyser != null) return;
 
-        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         var audioElement = soundManager.sounds[soundManager.soundIDs[0]]._a;
         var audioSrc = audioCtx.createMediaElementSource(audioElement);
         var analyser = audioCtx.createAnalyser();
@@ -213,11 +221,13 @@ class AppContainer extends React.Component {
         progress.style.width = audio.position / audio.duration * 100 + '%';
 
         if (this.state.analyser == null) return;
-        
+
+        var waves = document.getElementById('Waves');
+        if (waves.style.visibility == 'hidden') return;
+
         var array = new Uint8Array(125);
         this.state.analyser.getByteFrequencyData(array);
         var svg = d3.select("#Svg");
-        var waves = document.getElementById('Waves');
         svg.selectAll('rect')
             .data(array)
             .attr('y', function(d) {
@@ -266,6 +276,9 @@ class AppContainer extends React.Component {
                 analyser: null
             });
 
+            if (audioCtx != null)
+                audioCtx.close();
+
             main.removeThumbar();
             main.setLabelButton('None');
             d3.select('#Svg').remove();
@@ -279,15 +292,32 @@ class AppContainer extends React.Component {
     closeApp() {
         remote.app.quit();
     }
-    
-    updateDesign() {
+
+    toggleGooey() {
         if (this.state.track.title == '') return;
 
         var waves = document.getElementById('Waves');
+        if (waves.style.visibility == 'hidden')
+            waves.style.visibility = 'visible';
         if (!waves.classList.contains("gooey"))
             waves.classList.add('gooey');
-        else
+    }
+
+    toggleNormal() {
+        if (this.state.track.title == '') return;
+
+        var waves = document.getElementById('Waves');
+        if (waves.style.visibility == 'hidden')
+            waves.style.visibility = 'visible';
+        if (waves.classList.contains("gooey"))
             waves.classList.remove('gooey');
+    }
+    
+    toggleNoWave() {
+        if (this.state.track.title == '') return;
+
+        var waves = document.getElementById('Waves');
+        waves.style.visibility = 'hidden';
     }
 
     //#endRegion Methods
