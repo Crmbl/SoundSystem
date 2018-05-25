@@ -2,7 +2,7 @@ Windows Registry Editor Version 5.00
 
 [HKEY_CLASSES_ROOT\*\shell\Play with SoundSystem]
 @="Play with SoundSystem"
-"Icon"="C:\\Users\\axels\\source\\repos\\SoundSystem\\SoundSystem-win32-ia32\\SoundSystem.exe,0"
+"Icon"="silrgubhdfgiuvberugvreigvu\\SoundSystem\\SoundSystem-win32-ia32\\SoundSystem.exe,0"
 
 [HKEY_CLASSES_ROOT\*\shell\Play with SoundSystem\command]
-@="\"C:\\Users\\axels\\source\\repos\\SoundSystem\\SoundSystem-win32-ia32\\SoundSystem.exe\" \"%1\""
+@="\"silrgubhdfgiuvberugvreigvu\\\SoundSystem\\SoundSystem-win32-ia32\\SoundSystem.exe\" \"%1\""
