@@ -1,6 +1,6 @@
-//! CHANGE THIS VALUE
-process.env.NODE_ENV = 'development';
-//!/!/!/!/!/!/!/!/!/!
+//! CHANGE THIS VALUE development/production !//
+process.env.NODE_ENV = 'production';
+//!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/!/
 const electron = require('electron');
 if (process.env.NODE_ENV === 'development') {
   const eletronReload = require('electron-reload')(__dirname);
@@ -12,6 +12,7 @@ const Tray = electron.Tray;
 const path = require('path');
 const url = require('url');
 const ipc = electron.ipcMain;
+const fs = require('fs');
 
 let mainWindow;
 let tray = null;
@@ -27,7 +28,7 @@ function createWindow () {
     transparent: true,
     resizable: process.env.NODE_ENV === 'development',
     icon: path.join(__dirname, '/public/img/logo.ico'),
-    webPreferences: { devTools: process.env.NODE_ENV === 'development' }
+    webPreferences: { devTools: process.env.NODE_ENV === 'development' } 
   });
 
   mainWindow.loadURL(url.format({

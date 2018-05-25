@@ -7,8 +7,10 @@ const d3 = require('d3');
 const remote = window.require('electron').remote;
 const main = remote.require("./main.js");
 const ipc = window.require('electron').ipcRenderer;
+const fs = remote.require('fs');
 
 let audioCtx;
+let usedArgv = false;
 
 class AppContainer extends React.Component {
 
@@ -30,6 +32,10 @@ class AppContainer extends React.Component {
 
         ipc.on('toggle', function(event, data) {
             this.togglePlay();
+        }.bind(this));
+    
+        soundManager.onready(function() {
+            this.onDropAccepted(null);
         }.bind(this));
     }
 
@@ -64,10 +70,31 @@ class AppContainer extends React.Component {
     //#region Methods
 
     onDropAccepted(acceptedFiles) {
-        if (acceptedFiles.length != 1) return;
-        if (acceptedFiles[0].name == this.state.track.title) return;
+        var filePath = '';
+        var fileName = '';
+
+        if (remote.process.argv.length <= 1 || usedArgv == true || remote.process.env.NODE_ENV === 'development') {
+            if (acceptedFiles == null || acceptedFiles.length != 1) return;
+            if (acceptedFiles[0].name == this.state.track.title) return;
+
+            filePath = acceptedFiles[0].path;
+            fileName = acceptedFiles[0].name;
+        } else {
+            if (remote.process.argv[1].indexOf("flac") === -1 && remote.process.argv[1].indexOf("mp3") === -1) return;
+
+            var splited = remote.process.argv[1].split('\\');
+
+            filePath = remote.process.argv[1];
+            fileName = splited[splited.length - 1];
+            usedArgv = true;
+        }
+
+        if (remote.process.env.NODE_ENV === 'development')
+            console.log(fileName);
 
         d3.select("#Svg").remove();
+        if (audioCtx != null && audioCtx.state != 'closed')
+            audioCtx.close();
 
         var play = document.getElementById("Play");
         play.classList.remove("fa-play");
@@ -95,17 +122,14 @@ class AppContainer extends React.Component {
         this.setState({
             volume: Number(volume.value), 
             track: {
-                path: acceptedFiles[0].path, 
-                title: acceptedFiles[0].name
+                path: filePath, 
+                title: fileName
             },
             position: 0,
             playStatus: Sound.status.PLAYING,
             analyser: null
         });
-        
-        if (audioCtx != null)
-            audioCtx.close();
-
+    
         main.setLabelButton(false);
         main.buildThumbar(false);
     }
